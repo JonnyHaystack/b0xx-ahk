@@ -150,6 +150,8 @@ coordsExtendedFirefoxModYCLeft := [0.525, 0.85]     ; ~58 deg
 coordsExtendedFirefoxModYCDown := [0.45, 0.875]     ; ~63 deg
 coordsExtendedFirefoxModY := [0.3875, 0.9125]       ; ~67 deg
 
+foxCSSMacro := 0
+
 ; Debug info
 lastCoordTrace := ""
 
@@ -253,6 +255,33 @@ anyC() {
   return cUp() or cDown() or cLeft() or cRight()
 }
 
+pickFox(port) {
+  global
+  foxCSSMacro := port
+  updateAnalogStick()
+  if (port == 1) {
+    Sleep 170
+  } else if (port == 2) {
+    Sleep 170
+  } else if (port == 3) {
+    Sleep 290
+  }
+  foxCSSMacro := 0
+  updateAnalogStick()
+  ; Press A to select character
+  myStick.SetBtn(1, 5)
+  Sleep 30
+  myStick.SetBtn(0, 5)
+  ; Press Y twice to pick Blue Fox
+  myStick.SetBtn(1, 2)
+  Sleep 30
+  myStick.SetBtn(0, 2)
+  Sleep 30
+  myStick.SetBtn(1, 2)
+  Sleep 30
+  myStick.SetBtn(0, 2)
+}
+
 ; Updates the position on the analog stick based on the current held buttons
 updateAnalogStick() {
   setAnalogStick(getAnalogCoords())
@@ -264,6 +293,14 @@ updateCStick() {
 
 getAnalogCoords() {
   global
+  if (foxCSSMacro == 1) {
+    return [0.3375, 0.9375]
+  } else if (foxCSSMacro == 2) {
+    return [-0.4875, 0.8625]
+  } else if (foxCSSMacro == 3) {
+    return [-0.8750, 0.4750]
+  }
+
   if (anyShield()) {
     coords := getAnalogCoordsAirdodge()
   } else if (anyMod() and anyQuadrant() and (anyC() or buttonB)) {
@@ -726,8 +763,14 @@ Label9_UP:
 
 ; R
 Label10:
-  buttonR := true
-  myStick.SetBtn(1, 3)
+  if (bothMods()) {
+    ; Pressing ModX and ModY simultaneously changes top right row to fox CSS
+    ; macro ports 1-4
+    pickFox(1)
+  } else {
+    buttonR := true
+    myStick.SetBtn(1, 3)
+  }
   updateAnalogStick()
   return
 
@@ -750,8 +793,14 @@ Label11_UP:
 
 ; Y
 Label12:
-  buttonY := true
-  myStick.SetBtn(1, 2)
+  if (bothMods()) {
+    ; Pressing ModX and ModY simultaneously changes top right row to fox CSS
+    ; macro ports 1-4
+    pickFox(2)
+  } else {
+    buttonY := true
+    myStick.SetBtn(1, 2)
+  }
   return
 
 Label12_UP:
@@ -854,8 +903,14 @@ Label17_UP:
 
 ; Lightshield (Light)
 Label18:
-  buttonLightShield := true
-  setAnalogR(49)
+  if (bothMods()) {
+    ; Pressing ModX and ModY simultaneously changes top right row to fox CSS
+    ; macro ports 1-4
+    pickFox(3)
+  } else {
+    buttonLightShield := true
+    setAnalogR(49)
+  }
   return
 
 Label18_UP:
