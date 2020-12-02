@@ -260,7 +260,7 @@ pickFox(port) {
   foxCSSMacro := port
   updateAnalogStick()
   if (port == 1) {
-    Sleep 170
+    Sleep 180
   } else if (port == 2) {
     Sleep 170
   } else if (port == 3) {
